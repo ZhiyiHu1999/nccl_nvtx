@@ -962,11 +962,12 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_SEND_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_SEND_EXIT)
             char nvtxMsg[256];
             snprintf(nvtxMsg, sizeof(nvtxMsg), 
-                "ncclNetIsend(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d", 
+                "ncclNetIsend(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d, Sequence: %d", 
                 size,
                 resources->rank, 
                 resources->remoteRank, 
-                sub->channelId);
+                sub->channelId, 
+                sub->base+sub->transmitted);
 
             eventAttrib.version = NVTX_VERSION;
             eventAttrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE;
@@ -1001,10 +1002,12 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
       if (sub->done < sub->transmitted) {
         int done;
         int buffSlot = (sub->base+sub->done)%NCCL_STEPS;
+        int test_seq = sub->base+sub->done;
 
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_SEND_TEST_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_SEND_TEST_EXIT)
         char nvtxMsg[256];
-        snprintf(nvtxMsg, sizeof(nvtxMsg), "ncclNetSendTest()");
+        snprintf(nvtxMsg, sizeof(nvtxMsg), 
+            "ncclNetSendTest()");
 
         eventAttrib.version = NVTX_VERSION;
         eventAttrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE;
@@ -1030,11 +1033,12 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_SEND_TEST_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_SEND_TEST_EXIT)
           char nvtxMsg[256];
           snprintf(nvtxMsg, sizeof(nvtxMsg), 
-              "ncclNetSendTest(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d", 
+              "ncclNetSendTest(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d, Sequence: %d", 
               sub->nvtxSizesFifo[buffSlot],
               resources->rank, 
               resources->remoteRank, 
-              sub->channelId);
+              sub->channelId, 
+              test_seq);
 
           nvtxMarkA(nvtxMsg);
 
@@ -1166,11 +1170,12 @@ static ncclResult_t recvProxyProgress(struct ncclComm* comm, struct ncclProxyArg
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_RECV_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_RECV_EXIT)
             char nvtxMsg[256];
             snprintf(nvtxMsg, sizeof(nvtxMsg), 
-                "ncclNetIrecv(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d", 
+                "ncclNetIrecv(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d, Sequence: %d", 
                 sizes[i],
                 resources->remoteRank, 
                 resources->rank, 
-                sub->channelId);
+                sub->channelId, 
+                step);
 
             nvtxMarkA(nvtxMsg);
 
@@ -1230,11 +1235,12 @@ static ncclResult_t recvProxyProgress(struct ncclComm* comm, struct ncclProxyArg
 
             char nvtxMsg[256];
             snprintf(nvtxMsg, sizeof(nvtxMsg), 
-                "ncclNetRecvTest(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d", 
+                "ncclNetRecvTest(): Data_Size: %d, Sender_Rank: %d, Receiver_Rank: %d, Channel_ID: %d, Sequence: %d", 
                 sizes[i],
                 resources->remoteRank, 
                 resources->rank, 
-                sub->channelId);
+                sub->channelId,
+                step);
 
             nvtxMarkA(nvtxMsg);
 
