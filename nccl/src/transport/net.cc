@@ -967,7 +967,7 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
                 resources->rank, 
                 resources->remoteRank, 
                 sub->channelId, 
-                sub->base+sub->transmitted);
+                (int) (sub->base+sub->transmitted));
 
             eventAttrib.version = NVTX_VERSION;
             eventAttrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE;
@@ -1175,7 +1175,7 @@ static ncclResult_t recvProxyProgress(struct ncclComm* comm, struct ncclProxyArg
                 resources->remoteRank, 
                 resources->rank, 
                 sub->channelId, 
-                step);
+                (int) step);
 
             nvtxMarkA(nvtxMsg);
 
@@ -1240,7 +1240,7 @@ static ncclResult_t recvProxyProgress(struct ncclComm* comm, struct ncclProxyArg
                 resources->remoteRank, 
                 resources->rank, 
                 sub->channelId,
-                step);
+                (int) step);
 
             nvtxMarkA(nvtxMsg);
 
