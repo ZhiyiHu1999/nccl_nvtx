@@ -67,6 +67,10 @@ struct ncclProxySubArgs {
 
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_SEND_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_SEND_EXIT)
   int nvtxSizesFifo[NCCL_STEPS];
+  int nvtxSendFifo[NCCL_STEPS];
+  // int nvtxSendTestFifo[NCCL_STEPS];
+  int nvtxRecvFifo[NCCL_STEPS];
+  // int nvtxRecvTestFifo[NCCL_STEPS];
 #endif
 
 };
