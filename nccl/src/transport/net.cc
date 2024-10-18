@@ -967,7 +967,8 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
                 resources->rank, 
                 resources->remoteRank, 
                 sub->channelId, 
-                (int) (sub->base+sub->transmitted));
+                (int) (sub->transmitted));
+                // (int) (sub->base+sub->transmitted));
 
             eventAttrib.version = NVTX_VERSION;
             eventAttrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE;
@@ -1007,7 +1008,8 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
       if (sub->done < sub->transmitted) {
         int done;
         int buffSlot = (sub->base+sub->done)%NCCL_STEPS;
-        int test_seq = sub->base+sub->done;
+        // int test_seq = sub->base+sub->done;
+        int test_seq = sub->done;
 
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_SEND_TEST_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_SEND_TEST_EXIT)
         char nvtxMsg[256];
