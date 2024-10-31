@@ -933,6 +933,8 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
           bool shared = (p == NCCL_PROTO_SIMPLE) && resources->shared;
           char* buff = shared ? localBuff+resources->recvMem->offsFifo[buffSlot] : localBuff+buffSlot*stepSize;
           int ready = 1;
+          // INFO(NCCL_INIT, "resources->useGdr: %d\n",
+          //           resources->useGdr);
           if (p == NCCL_PROTO_LL128) {
             ready = resources->useGdr;
             if (!ready) {
@@ -1025,7 +1027,7 @@ static ncclResult_t sendProxyProgress(struct ncclComm* comm, struct ncclProxyArg
 
         nvtxRangePushEx(&eventAttrib);
 
-        if (sub->nvtxSendFifo[buffSlot] == 0) {  // The first net send test for the step
+        if (sub->nvtxSendFifo[buffSlot] == 0) {  // The first net send test for the step, we do not care about the end time of the send test
           sub->nvtxSendFifo[buffSlot] = 1;
 
           char nvtxMsg[256];
@@ -1271,11 +1273,17 @@ static ncclResult_t recvProxyProgress(struct ncclComm* comm, struct ncclProxyArg
 
 #if defined(ENABLE_NET_NVTX) && defined(ENABLE_NVTX_EVENT_NET_RECV_TEST_ENTRY) && defined(ENABLE_NVTX_EVENT_NET_RECV_TEST_EXIT)
         if(!done) {
-          nvtxRangePop();
+          // INFO(NCCL_INIT, "subGroup->groupSize: %d\n",
+          //           subGroup->groupSize);  // subGroup->groupSize: 1
+          for (int i=0; i<subGroup->groupSize; i++) {
+            nvtxRangePop();
+          }
         }
 #endif
 
         if (done) {
+          // INFO(NCCL_INIT, "done: %d\n",
+          //           done);  // done: 1
           int needFlush = 0;
           int totalSize = 0;
           for (int i=0; i<NCCL_PROXY_MAX_SUBS; i++) totalSize += sizes[i];
